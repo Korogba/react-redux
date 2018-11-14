@@ -5,6 +5,7 @@ import * as authorActions from '../../actions/authorActions';
 import {browserHistory} from 'react-router';
 import AuthorList from "./AuthorList";
 import toastr from "toastr";
+import {formatAuthorName} from '../../selectors/authorFormatter';
 
 class AuthorsPage extends React.Component {
   constructor(props, context) {
@@ -12,17 +13,30 @@ class AuthorsPage extends React.Component {
 
     this.deleteAuthor = this.deleteAuthor.bind(this);
     this.redirectToAddAuthorPage = this.redirectToAddAuthorPage.bind(this);
+    this.displaySuccessMessage = this.displaySuccessMessage.bind(this);
   }
 
   redirectToAddAuthorPage() {
     browserHistory.push('/author');
   }
 
-  deleteAuthor(author){
+  deleteAuthor(event, author){
+    event.preventDefault();
+    const authorName = formatAuthorName(author);
+
+    this.setState({saving: true});
+
     this.props.actions.deleteAuthor(author)
+      .then(() => this.displaySuccessMessage(authorName))
       .catch(error => {
         toastr.error(error);
+        this.setState({saving: false});
       });
+  }
+
+  displaySuccessMessage(authorName) {
+    toastr.success(`${authorName} deleted!`);
+    this.setState({saving: false});
   }
 
   render() {
@@ -33,15 +47,15 @@ class AuthorsPage extends React.Component {
         <input type="submit"
                value="Add Author"
                className="btn btn-primary"
-               onClick={this.redirectToAddAuthorPage}
-        />
+               onClick={this.redirectToAddAuthorPage} />
         <AuthorList
           authors={authors}
           courses={courses}
-          deleteAuthor={this.deleteAuthor}/>
+          deleteAuthor={this.deleteAuthor} />
       </div>
     );
   }
+
 }
 
 AuthorsPage.propTypes = {

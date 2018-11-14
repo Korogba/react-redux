@@ -6,22 +6,22 @@ const AuthorList = ({authors, courses, deleteAuthor}) => {
   return (
     <table className="table">
       <thead>
-      <tr>
-        <th>ID</th>
-        <th>Full Name</th>
-        <th>Course Count</th>
-      </tr>
+        <tr>
+          <th>ID</th>
+          <th>Full Name</th>
+          <th>Course Count</th>
+        </tr>
       </thead>
       <tbody>
-      {authors.map(author => {
-        const details = courseDetails(author.id, courses);
-        return (<AuthorListRow key={author.id}
-                       author={author}
-                       disable={details.disabled}
-                       onDelete={deleteAuthor}
-                       courseCount={details.courseCount}/>);
-      })
-      }
+        {authors.map(author => {
+          const details = courseDetails(author.id, courses);
+          return (<AuthorListRow key={author.id}
+                                 author={author}
+                                 disable={details.disabled}
+                                 onDelete={deleteAuthor}
+                                 courseCount={details.courseCount}/>);
+        })
+        }
       </tbody>
     </table>
   );

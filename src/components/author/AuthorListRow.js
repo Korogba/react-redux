@@ -3,6 +3,11 @@ import {Link} from 'react-router';
 import {formatAuthorName} from '../../selectors/authorFormatter';
 
 const AuthorListRow = ({author, disable, courseCount, onDelete}) => {
+
+  const deleteAuthor = () => {
+    onDelete(event, author);
+  };
+
   return (
     <tr>
       <td><Link to={'/author/' + author.id}>{author.id}</Link></td>
@@ -14,7 +19,7 @@ const AuthorListRow = ({author, disable, courseCount, onDelete}) => {
           disabled={disable}
           value="Delete"
           className="btn btn-danger btn-sm"
-          onClick={onDelete} />
+          onClick={deleteAuthor} />
       </td>
     </tr>
   );
