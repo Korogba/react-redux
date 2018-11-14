@@ -3,16 +3,20 @@ import AuthorListRow from "./AuthorListRow";
 import {courseDetails} from '../../selectors/authorCourseDetails';
 
 const AuthorList = ({authors, courses, deleteAuthor}) => {
-  return (
-    <table className="table">
-      <thead>
+
+  const numberOfAuthors = authors.length;
+
+  if(numberOfAuthors > 0) {
+    return (
+      <table className="table">
+        <thead>
         <tr>
           <th>ID</th>
           <th>Full Name</th>
           <th>Course Count</th>
         </tr>
-      </thead>
-      <tbody>
+        </thead>
+        <tbody>
         {authors.map(author => {
           const details = courseDetails(author.id, courses);
           return (<AuthorListRow key={author.id}
@@ -22,9 +26,16 @@ const AuthorList = ({authors, courses, deleteAuthor}) => {
                                  courseCount={details.courseCount}/>);
         })
         }
-      </tbody>
-    </table>
-  );
+        </tbody>
+      </table>
+    );
+  } else {
+    return (
+      <div>
+        <h5>There are no authors. Click the link above to add one.</h5>
+      </div>
+    );
+  }
 };
 
 AuthorList.propTypes = {
