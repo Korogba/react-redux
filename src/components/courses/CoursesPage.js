@@ -4,12 +4,33 @@ import {bindActionCreators} from 'redux';
 import * as courseActions from '../../actions/courseActions';
 import CourseList from './CourseList';
 import {browserHistory} from 'react-router';
+import toastr from "toastr";
 
 class CoursesPage extends React.Component {
   constructor(props, context) {
     super(props, context);
 
+    this.deleteCourse = this.deleteCourse.bind(this);
+    this.displaySuccessMessage = this.displaySuccessMessage.bind(this);
     this.redirectToAddCoursePage = this.redirectToAddCoursePage.bind(this);
+  }
+
+  deleteCourse(event, course){
+    event.preventDefault();
+
+    this.setState({saving: true});
+
+    this.props.actions.deleteCourse(course)
+      .then(() => this.displaySuccessMessage(course.title))
+      .catch(error => {
+        toastr.error(error);
+        this.setState({saving: false});
+      });
+  }
+
+  displaySuccessMessage(authorName) {
+    toastr.success(`${authorName} deleted!`);
+    this.setState({saving: false});
   }
 
   courseRow(course, index) {
@@ -30,7 +51,9 @@ class CoursesPage extends React.Component {
                className="btn btn-primary"
                onClick={this.redirectToAddCoursePage}
         />
-        <CourseList courses={courses}/>
+        <CourseList
+          courses={courses}
+          deleteCourse={this.deleteCourse}/>
       </div>
     );
   }
