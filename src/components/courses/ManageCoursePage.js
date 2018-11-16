@@ -56,6 +56,17 @@ export class ManageCoursePage extends React.Component {
       formIsValid = false;
     }
 
+    if (this.state.course.category.length <= 0) {
+      errors.category = 'Category must not be empty.';
+      formIsValid = false;
+    }
+
+    const validDurationFormat = /^[0-9]?[0-9]:[0-9]?[0-9]$/;
+    if (!validDurationFormat.test(this.state.course.length)) {
+      errors.length = 'Length must have the format "--:--" where "-" represents a number.';
+      formIsValid = false;
+    }
+
     this.setState({errors: errors});
     return formIsValid;
   }
@@ -67,7 +78,10 @@ export class ManageCoursePage extends React.Component {
       return;
     }
 
-    this.setState({saving: true});
+    this.setState({
+      saving: true,
+      isDirty: false
+    });
 
     this.props.actions.saveCourse(this.state.course)
       .then(() => this.redirect())

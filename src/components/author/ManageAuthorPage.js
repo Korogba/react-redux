@@ -71,7 +71,10 @@ export class ManageAuthorPage extends React.Component {
       return;
     }
 
-    this.setState({saving: true});
+    this.setState({
+      saving: true,
+      isDirty: false
+    });
 
     this.props.actions.saveAuthor(this.state.author)
       .then(() => this.redirect())
