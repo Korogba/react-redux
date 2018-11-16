@@ -5,12 +5,21 @@ import {ManageCoursePage} from './ManageCoursePage';
 
 describe ('Manage Course Page', () => {
   it('sets error message upon blur of empty title field', () => {
+
     const props = {
       authors: [],
       actions: { saveCourse: () => { return Promise.resolve(); }},
-      course: {id: '', watchHref: '', title: '', authorId: '', length: '', category: ''}
+      course: {id: '', watchHref: '', title: '', authorId: '', length: '', category: ''},
+      route: {}
     };
-    const wrapper = mount(<ManageCoursePage {...props}/>);
+
+    const context = {
+      router: {
+        setRouteLeaveHook: (props, fn) => {}
+      }
+    };
+
+    const wrapper = mount(<ManageCoursePage {...props} />, {context});
     const saveButton = wrapper.find('input').last();
     expect(saveButton.prop('type')).toBe('submit'); //assure we found the submit.
     saveButton.simulate('click');

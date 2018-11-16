@@ -12,11 +12,21 @@ export class ManageAuthorPage extends React.Component {
     this.state = {
       author: Object.assign({}, this.props.author),
       errors: {},
-      saving: false
+      saving: false,
+      isDirty: false
     };
 
     this.saveAuthor = this.saveAuthor.bind(this);
     this.updateAuthorState = this.updateAuthorState.bind(this);
+  }
+
+  componentDidMount() {
+    this.context.router.setRouteLeaveHook(this.props.route, () => {
+      if(this.state.isDirty) {
+        return 'You have unsaved changes. Do you still want to leave?';
+      }
+      return true;
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -30,7 +40,10 @@ export class ManageAuthorPage extends React.Component {
     const field = event.target.name;
     let author = Object.assign({}, this.state.author);
     author[field] = event.target.value;
-    return this.setState({author: author});
+    return this.setState({
+      author: author,
+      isDirty: true
+    });
   }
 
   authorFormIsValid() {
@@ -88,7 +101,8 @@ export class ManageAuthorPage extends React.Component {
 
 ManageAuthorPage.propTypes = {
   author: PropTypes.object.isRequired,
-  actions: PropTypes.object.isRequired
+  actions: PropTypes.object.isRequired,
+  route: PropTypes.object.isRequired
 };
 
 //Pull in the React Router context so router is available on this.context.router.

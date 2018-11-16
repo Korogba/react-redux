@@ -13,11 +13,21 @@ export class ManageCoursePage extends React.Component {
     this.state = {
       course: Object.assign({}, this.props.course),
       errors: {},
-      saving: false
+      saving: false,
+      isDirty: false
     };
 
     this.saveCourse = this.saveCourse.bind(this);
     this.updateCourseState = this.updateCourseState.bind(this);
+  }
+
+  componentDidMount() {
+    this.context.router.setRouteLeaveHook(this.props.route, () => {
+      if(this.state.isDirty) {
+        return 'You have unsaved changes. Do you still want to leave?';
+      }
+      return true;
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -31,7 +41,10 @@ export class ManageCoursePage extends React.Component {
     const field = event.target.name;
     let course = Object.assign({}, this.state.course);
     course[field] = event.target.value;
-    return this.setState({course: course});
+    return this.setState({
+      course: course,
+      isDirty: true
+    });
   }
 
   courseFormIsValid() {
@@ -86,7 +99,8 @@ export class ManageCoursePage extends React.Component {
 ManageCoursePage.propTypes = {
   course: PropTypes.object.isRequired,
   authors: PropTypes.array.isRequired,
-  actions: PropTypes.object.isRequired
+  actions: PropTypes.object.isRequired,
+  route: PropTypes.object.isRequired
 };
 
 //Pull in the React Router context so router is available on this.context.router.
