@@ -10,6 +10,7 @@ describe ('Manage Course Page', () => {
       authors: [],
       actions: { saveCourse: () => { return Promise.resolve(); }},
       course: {id: '', watchHref: '', title: '', authorId: '', length: '', category: ''},
+      isCourseValid: true,
       route: {}
     };
 

@@ -4,6 +4,7 @@ import {bindActionCreators} from 'redux';
 import {authorsFormattedForDropdown} from '../../selectors/selectors';
 import * as courseActions from '../../actions/courseActions';
 import CourseForm from './CourseForm';
+import Page404 from '../common/Page404';
 import toastr from 'toastr';
 
 export class ManageCoursePage extends React.Component {
@@ -31,6 +32,9 @@ export class ManageCoursePage extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    if(!this.props.isCourseValid){
+      return;
+    }
     if (this.props.course.id !== nextProps.course.id) {
       // Necessary to populate form when existing course is loaded directly.
       this.setState({course: Object.assign({}, nextProps.course)});
@@ -98,15 +102,21 @@ export class ManageCoursePage extends React.Component {
   }
 
   render(){
-    return(
-      <CourseForm
-        course={this.state.course}
-        onChange={this.updateCourseState}
-        onSave={this.saveCourse}
-        errors={this.state.errors}
-        allAuthors={this.props.authors}
-        saving={this.state.saving} />
-    );
+    if(this.props.isCourseValid) {
+      return(
+        <CourseForm
+          course={this.state.course}
+          onChange={this.updateCourseState}
+          onSave={this.saveCourse}
+          errors={this.state.errors}
+          allAuthors={this.props.authors}
+          saving={this.state.saving} />
+      );
+    } else {
+      return (
+        <Page404 />
+      );
+    }
   }
 }
 
@@ -114,7 +124,8 @@ ManageCoursePage.propTypes = {
   course: PropTypes.object.isRequired,
   authors: PropTypes.array.isRequired,
   actions: PropTypes.object.isRequired,
-  route: PropTypes.object.isRequired
+  route: PropTypes.object.isRequired,
+  isCourseValid: PropTypes.bool.isRequired
 };
 
 //Pull in the React Router context so router is available on this.context.router.
@@ -130,15 +141,22 @@ function getCourseById(courses, courseId) {
 
 function mapStateToProps(state, ownProps) {
   const courseId = ownProps.params.id; // from the path `course/:id`
+  let isCourseValid = true;
 
   let course = {id: '', watchHref: '', title: '', authorId: '', length: '', category: ''};
 
   if(courseId && state.courses.length > 0) {
     course = getCourseById(state.courses, courseId);
+
+    if(!course) {
+      isCourseValid = false;
+      course = {id: '', watchHref: '', title: '', authorId: '', length: '', category: ''};
+    }
   }
 
   return {
     course: course,
+    isCourseValid: isCourseValid,
     authors: authorsFormattedForDropdown(state.authors)
   };
 }
