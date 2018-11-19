@@ -121,10 +121,13 @@ CoursesPage.propTypes = {
 function mapStateToProps(state, ownProps) {
   const itemsPerPage = 4;
   const stop = Math.min(itemsPerPage, state.courses.length);
+  let allCourses = [...state.courses].sort((i, j) => {
+    return i.title.localeCompare(j.title);
+  });
 
   return {
-    allCourses: state.courses,
-    courses: [...state.courses.slice(0, stop)],
+    allCourses: allCourses,
+    courses: [...allCourses.slice(0, stop)],
     itemsPerPage: itemsPerPage,
     pageCount: Math.ceil(state.courses.length/itemsPerPage)
   };
